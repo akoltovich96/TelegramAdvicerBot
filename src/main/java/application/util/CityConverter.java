@@ -2,23 +2,22 @@ package application.util;
 
 import application.dto.CityDTO;
 import application.entity.City;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CityConverter {
 
-    private static ModelMapper modelMapper;
+    private final AdviceConverter adviceConverter;
 
-    public CityConverter(ModelMapper modelMapper) {
-        CityConverter.modelMapper = modelMapper;
+    public CityConverter(AdviceConverter adviceConverter) {
+        this.adviceConverter = adviceConverter;
     }
 
-    public static CityDTO cityToCityDTO(City city) {
-        return modelMapper.map(city, CityDTO.class);
-    }
-
-    public static City cityDTOToCity(CityDTO cityDTO) {
-        return modelMapper.map(cityDTO, City.class);
+    public CityDTO cityToCityDTO(City city) {
+        CityDTO cityDTO = new CityDTO();
+        cityDTO.setId(city.getId());
+        cityDTO.setName(city.getName());
+        cityDTO.setAdvices(adviceConverter.listOfAdvicesToDTO(city.getAdvices()));
+        return cityDTO;
     }
 }

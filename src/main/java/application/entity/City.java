@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode
 @Table(name = "CITIES")
+@SequenceGenerator(name="advice_id_gen",initialValue = 10, allocationSize = 100)
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "city_id_gen")
@@ -36,6 +38,6 @@ public class City {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "city")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "city")
     private List<Advice> advices = new ArrayList<>();
 }

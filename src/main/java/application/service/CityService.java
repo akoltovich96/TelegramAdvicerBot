@@ -4,7 +4,6 @@ import application.dto.AdviceDTO;
 import application.dto.CityDTO;
 import application.entity.City;
 import application.repository.CityRepository;
-import application.util.AdviceConverter;
 import application.util.CityConverter;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +15,11 @@ import java.util.stream.Collectors;
 @Service
 public class CityService {
 
-    private final AdviceConverter adviceConverter;
+    private final CityConverter cityConverter;
     private final CityRepository cityRepository;
 
-    private CityService(AdviceConverter adviceConverter, CityRepository cityRepository) {
-        this.adviceConverter = adviceConverter;
+    private CityService(CityConverter cityConverter, CityRepository cityRepository) {
+        this.cityConverter = cityConverter;
         this.cityRepository = cityRepository;
     }
 
@@ -29,6 +28,7 @@ public class CityService {
         if (!cities.isEmpty()) {
             List<CityDTO> cityDTOS = cities.stream()
                     .map(city -> CityDTO.builder()
+                            .id(city.getId())
                             .name(city.getName())
                             .advices(city.getAdvices().stream()
                                     .map(advice -> AdviceDTO.builder()
@@ -42,24 +42,9 @@ public class CityService {
         return new ArrayList<>();
     }
 
-//    public List<CityDTO> getAllCities() {
-//        List<City> cities = cityRepository.findAll();
-//        //if (!cities.isEmpty()) {
-//            for (City c : cities) {
-//                List<CityDTO> cityDTOS = new ArrayList<>();
-//                CityDTO cityDTO = new CityDTO();
-//                cityDTO.setName(c.getName());
-//                cityDTO.setAdvices(c.getAdvices());
-//                cityDTOS.add(cityDTO);
-//                cities.iterator().next();
-//                return cityDTOS;
-//            }
-//       // }
-//        return new ArrayList<>();
-//    }
-
     public void addCity(CityDTO cityDTO) {
         City newCity = new City();
+        newCity.setId(cityDTO.getId());
         newCity.setName(cityDTO.getName());
         newCity.setAdvices(new ArrayList<>());
         cityRepository.save(newCity);
@@ -68,7 +53,7 @@ public class CityService {
     public CityDTO findByName(String name) {
         City city = cityRepository.findByName(name);
         if (city != null) {
-            return CityConverter.cityToCityDTO(city);
+            return cityConverter.cityToCityDTO(city);
         }
         return null;
     }
@@ -77,7 +62,7 @@ public class CityService {
         Optional<City> byId = cityRepository.findById(id);
         byId.get().setName(name);
         cityRepository.saveAndFlush(byId.get());
-        return CityConverter.cityToCityDTO(byId.get());
+        return cityConverter.cityToCityDTO(byId.get());
     }
 
     public void deleteCity(String name) {

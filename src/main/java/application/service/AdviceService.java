@@ -1,13 +1,11 @@
 package application.service;
 
 import application.dto.AdviceDTO;
-import application.dto.CityDTO;
 import application.entity.Advice;
 import application.entity.City;
 import application.repository.AdviceRepository;
 import application.repository.CityRepository;
 import application.util.AdviceConverter;
-import application.util.CityConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,18 +24,22 @@ public class AdviceService {
     }
 
     public void addAdviceToCity(String name, String content) {
-        CityDTO cityDTO = CityConverter.cityToCityDTO(cityRepository.findByName(name));
-        AdviceDTO adviceDTO = new AdviceDTO();
-        adviceDTO.setContent(content);
-        cityDTO.getAdvices().add(adviceDTO);
+        City city = cityRepository.findByName(name);
+        Advice advice = new Advice();
+        advice.setContent(content);
+        advice.setCity(city);
+        city.getAdvices().add(advice);
+        cityRepository.saveAndFlush(city);
     }
 
     public List<AdviceDTO> getAllAdvicesByCityName(String name) {
-        return AdviceConverter.listOfAdvicesToDTO(cityRepository.findByName(name).getAdvices());
+        return adviceConverter.listOfAdvicesToDTO(cityRepository.findByName(name).getAdvices());
     }
 
-    public AdviceDTO updateAdvice(Long id, String advice) {
-        adviceRepository.findById(id).get().setContent(advice);
+    public AdviceDTO updateAdvice(Long id, String content) {
+        Advice advice = adviceRepository.findById(id).get();
+        advice.setContent(content);
+        adviceRepository.saveAndFlush(advice);
         return adviceConverter.adviceToAdviceDTO(adviceRepository.findById(id).get());
     }
 

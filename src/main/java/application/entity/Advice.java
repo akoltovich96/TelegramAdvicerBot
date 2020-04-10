@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 @Data
 @EqualsAndHashCode
 @Table(name = "ADVICES")
+@SequenceGenerator(name="advice_id_gen",initialValue = 10, allocationSize = 100)
 public class Advice {
 
     @Id

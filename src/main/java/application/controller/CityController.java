@@ -1,7 +1,7 @@
 package application.controller;
 
+import application.dto.AdviceDTO;
 import application.dto.CityDTO;
-import application.entity.City;
 import application.service.AdviceService;
 import application.service.CityService;
 import org.springframework.http.MediaType;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,19 +28,24 @@ public class CityController {
         this.adviceService = adviceService;
     }
 
-    @GetMapping(value = "/city", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cities", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CityDTO> getAllCities() {
         return cityService.getAllCities();
     }
 
     @GetMapping(value = "/city/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public CityDTO findByName(@Valid @RequestParam(required = false, name = "name") String name) {
+    public CityDTO findByName(@Valid @PathVariable(name = "name") String name) {
         return cityService.findByName(name);
     }
 
-    @PostMapping(value = "/advice/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void addAdviceToCity(@Valid @RequestParam(required = false, name = "name") String name, @Valid @RequestBody String content) {
+    @GetMapping("/advice/{name}")
+    public List<AdviceDTO> getAllAdvicesByCityName(@PathVariable(name = "name") String name) {
+        return adviceService.getAllAdvicesByCityName(name);
+    }
+
+    @PostMapping(value = "/advice/add/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void addAdviceToCity(@Valid @PathVariable(name = "name") String name, @Valid @RequestBody String content) {
         adviceService.addAdviceToCity(name, content);
     }
 
@@ -50,13 +54,23 @@ public class CityController {
         cityService.addCity(cityDTO);
     }
 
-    @PutMapping(value = "/city/update/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CityDTO updateCity(@PathVariable Long id, @RequestBody String name) {
+    @PutMapping(value = "/city/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public CityDTO updateCity(@Valid @PathVariable Long id, @RequestBody String name) {
         return cityService.updateCity(id, name);
     }
 
+    @PutMapping("/advice/update/{id}")
+    public AdviceDTO updateAdvice(@PathVariable Long id, @RequestBody String content) {
+        return adviceService.updateAdvice(id, content);
+    }
+
     @DeleteMapping("/city/delete/{name}")
-    public void deleteCity(String name) {
+    public void deleteCity(@PathVariable String name) {
         cityService.deleteCity(name);
+    }
+
+    @DeleteMapping("/advice/delete/{id}")
+    public void deleteAdvice(@PathVariable Long id) {
+        adviceService.deleteAdvice(id);
     }
 }
