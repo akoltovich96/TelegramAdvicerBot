@@ -58,7 +58,7 @@ public class BotController extends TelegramLongPollingBot {
 
         CityDTO cityDTO = cityService.findByName(cityName);
         if (cityDTO != null) {
-            cityDTO.getAdvices().forEach(advice -> stringBuffer.append(advice + "\n"));
+            cityDTO.getAdvices().forEach(advice -> stringBuffer.append(advice.getContent() + "\n"));
             return stringBuffer.toString();
         }
         return stringBuffer.append(NOT_FOUND_CITY).toString();

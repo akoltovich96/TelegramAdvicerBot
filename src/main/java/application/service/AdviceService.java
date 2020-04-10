@@ -46,5 +46,4 @@ public class AdviceService {
     public void deleteAdvice(Long id) {
         adviceRepository.deleteById(id);
     }
-
 }
